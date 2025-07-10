@@ -159,38 +159,79 @@ function selectRandomParticipants(count) {
 function updateVotingModal() {
     const currentProjectParticipants = projectRequirements[gameState.playerCount][gameState.currentProjectIndex];
     
-    // 현재 투표 순서 표시 (1부터 시작)
-    const voteNumber = gameState.currentVoteIndex + 1;
-    document.getElementById('current-voter').textContent = `${voteNumber}번째 투표`;
+    const modalContent = document.getElementById('voting-modal');
+    modalContent.innerHTML = `
+        <div class="modal-content">
+            <h3>프로젝트 ${gameState.currentProjectIndex + 1} (${currentProjectParticipants}명 참여)</h3>
+            ${gameState.playerCount === 7 && gameState.currentProjectIndex === 3 ? 
+                '<p class="special-rule">특별 룰: 2명 이상 실패해야 실패</p>' : ''}
+            <p>투표 현황: <span id="vote-count">0</span>/${currentProjectParticipants}</p>
+            <div class="vote-buttons">
+                <button class="vote-btn success" onclick="submitVote('success')">성공</button>
+                <button class="vote-btn fail" onclick="submitVote('fail')">실패</button>
+            </div>
+        </div>
+    `;
     
-    // 투표 카운트 업데이트
-    document.getElementById('vote-count').textContent = gameState.votes.length;
-    document.getElementById('total-players').textContent = currentProjectParticipants;
-    
-    // 프로젝트 정보 업데이트
-    const modalTitle = document.querySelector('#voting-modal h3');
-    let titleText = `프로젝트 ${gameState.currentProjectIndex + 1} (${currentProjectParticipants}명 참여)`;
-    
-    // 7인 게임 4번째 프로젝트 특별 룰 안내
-    if (gameState.playerCount === 7 && gameState.currentProjectIndex === 3) {
-        titleText += ' - 특별 룰: 2명 이상 실패해야 실패';
-    }
-    
-    modalTitle.textContent = titleText;
+    modalContent.classList.remove('hidden');
 }
 
 // 투표 제출
 function submitVote(vote) {
     gameState.votes.push(vote);
-    gameState.currentVoteIndex++;
-
-    if (gameState.currentVoteIndex < gameState.requiredVoters) {
-        updateVotingModal();
-    } else {
-        // 모든 투표 완료
-        processVoteResults();
-        document.getElementById('voting-modal').classList.add('hidden');
+    const voteCount = document.getElementById('vote-count');
+    voteCount.textContent = gameState.votes.length;
+    
+    const currentProjectParticipants = projectRequirements[gameState.playerCount][gameState.currentProjectIndex];
+    
+    // 모든 투표가 완료되면 결과 공개 버튼 표시
+    if (gameState.votes.length === currentProjectParticipants) {
+        const voteButtons = document.querySelector('.vote-buttons');
+        voteButtons.innerHTML = `
+            <button class="reveal-btn" onclick="revealVoteResults()">결과 공개</button>
+        `;
     }
+}
+
+// 투표 결과 공개
+function revealVoteResults() {
+    const failVotes = gameState.votes.filter(vote => vote === 'fail').length;
+    let success;
+    
+    // 7인 게임 4번째 프로젝트(인덱스 3)에서는 2명 이상이 실패해야 실패
+    if (gameState.playerCount === 7 && gameState.currentProjectIndex === 3) {
+        success = failVotes < 2; // 2명 미만이 실패하면 성공
+    } else {
+        success = failVotes === 0; // 기본 룰: 1명이라도 실패하면 실패
+    }
+    
+    const modalContent = document.querySelector('.modal-content');
+    modalContent.innerHTML = `
+        <h3>프로젝트 ${gameState.currentProjectIndex + 1} 결과</h3>
+        <p>성공 투표: ${gameState.votes.length - failVotes}</p>
+        <p>실패 투표: ${failVotes}</p>
+        <p class="result-text" style="color: ${success ? '#4fff4f' : '#ff4f4f'}">
+            프로젝트 ${success ? '성공!' : '실패!'}
+        </p>
+        <button class="confirm-btn" onclick="closeVotingModal(${success})">확인</button>
+    `;
+}
+
+// 투표 모달 닫기
+function closeVotingModal(success) {
+    const modal = document.getElementById('voting-modal');
+    modal.classList.add('hidden');
+    
+    gameState.projectResults.push(success);
+    
+    const circle = document.getElementById(`circle-${gameState.currentProjectIndex + 1}`);
+    circle.classList.add(success ? 'success' : 'fail');
+    circle.classList.add('disabled');
+    
+    // 승리 조건 확인
+    setTimeout(() => {
+        checkWinCondition();
+    }, 500);
 }
 
 // 투표 결과 처리

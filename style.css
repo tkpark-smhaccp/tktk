@@ -1,3 +1,95 @@
+/* Safari 호환성 스타일 */
+html, body {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    position: fixed;
+    overflow: hidden;
+    -webkit-overflow-scrolling: touch;
+}
+
+.container {
+    height: 100%;
+    width: 100%;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    position: relative;
+    z-index: 3;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+/* 아이패드 최적화 */
+@supports (-webkit-touch-callout: none) {
+    .game-board {
+        margin: 20px auto;
+        max-width: 90%;
+        -webkit-backdrop-filter: blur(10px);
+    }
+
+    .project-circles {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+        gap: 15px;
+        justify-items: center;
+        padding: 10px;
+        margin: 0 auto;
+        max-width: 600px;
+    }
+
+    .project-circle {
+        width: 80px;
+        height: 80px;
+        margin: 5px;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    .pass-tokens {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 10px;
+        justify-items: center;
+        padding: 10px;
+        margin: 0 auto;
+        max-width: 400px;
+    }
+
+    .pass-token {
+        width: 50px;
+        height: 50px;
+        margin: 5px;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    .vote-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 15px;
+        margin: 20px 0;
+    }
+
+    .vote-btn {
+        min-width: 120px;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    .modal-content {
+        width: 90%;
+        max-width: 500px;
+        padding: 30px;
+        margin: 20px;
+    }
+
+    /* 터치 최적화 */
+    button {
+        padding: 15px 25px;
+        min-height: 44px;
+        -webkit-tap-highlight-color: transparent;
+    }
+}
+
 /* 기본 스타일 */
 * {
     margin: 0;
@@ -556,6 +648,65 @@ body::after {
 }
 
 .reset-btn:hover {
+    background: rgba(0, 255, 0, 0.3);
+    box-shadow: 0 0 35px rgba(0, 255, 0, 0.6);
+    transform: translateY(-2px);
+    color: #4fff4f;
+    border-color: #4fff4f;
+}
+
+.reveal-btn {
+    padding: 15px 30px;
+    font-size: 1.2rem;
+    background: rgba(255, 215, 0, 0.15);
+    color: #ffd700;
+    border: 1px solid #ffd700;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
+    font-family: 'Courier New', monospace;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin: 20px 0;
+    text-shadow: 0 0 8px rgba(255, 215, 0, 0.8);
+    width: 100%;
+    max-width: 300px;
+}
+
+.reveal-btn:hover {
+    background: rgba(255, 215, 0, 0.3);
+    box-shadow: 0 0 35px rgba(255, 215, 0, 0.6);
+    transform: translateY(-2px);
+    color: #ffe44d;
+    border-color: #ffe44d;
+}
+
+.special-rule {
+    color: #ffd700;
+    font-size: 1rem;
+    margin: 10px 0;
+    text-shadow: 0 0 8px rgba(255, 215, 0, 0.8);
+}
+
+.confirm-btn {
+    padding: 15px 30px;
+    font-size: 1.2rem;
+    background: rgba(0, 255, 0, 0.15);
+    color: #1fff1f;
+    border: 1px solid #1fff1f;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 20px rgba(0, 255, 0, 0.4);
+    font-family: 'Courier New', monospace;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-top: 20px;
+    text-shadow: 0 0 8px rgba(0, 255, 0, 0.8);
+}
+
+.confirm-btn:hover {
     background: rgba(0, 255, 0, 0.3);
     box-shadow: 0 0 35px rgba(0, 255, 0, 0.6);
     transform: translateY(-2px);
